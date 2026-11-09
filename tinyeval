@@ -2,7 +2,7 @@
 # tinyeval: evals for AI features, in one bash file. https://github.com/evalship-hq/tinyeval
 # Runs on bash 3.2 (macOS) and up with the tools every bash install has. judge also needs curl.
 
-_te_version=0.9.1
+_te_version=0.9.2
 _te_usage="Usage: tinyeval [-n runs] [-j jobs] [-t seconds] [-k text] [-o file] [-x file] [eval files...]
        tinyeval update
        tinyeval share [file]
@@ -687,6 +687,9 @@ for _te_f in "$@"; do
     _te_name='' _te_n=0 _te_header='' _te_names=$'\n'
     _te_pids=()
     _te_dirs=()
+    # bash 3.2 (macOS) brace-expands inside "$(echo '...')" once an apostrophe written '"'"' flips its quote
+    # count: JSON rows like {"a": 1, "b": 2} multiplied into billions of inputs and filled all memory.
+    set +B
     trap '[ $? -ne 127 ] || _te_unknown "$BASH_COMMAND"' ERR
     # shellcheck source=/dev/null
     . "$_te_f"

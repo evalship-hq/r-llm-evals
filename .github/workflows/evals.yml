@@ -18,7 +18,7 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2 # installs renv.lock's packages and caches them
       # R has no build step: load the bot once, so a missing package fails here.
       - run: Rscript -e 'source("R/support.R")'
-      - run: ./tinyeval -n 3
+      - run: Rscript -e 'quit(status = tinyeval::run("-n", "3"))'
         if: env.ANTHROPIC_API_KEY != ''
       - run: echo "::notice::Add the ANTHROPIC_API_KEY repository secret to run the evals."
         if: env.ANTHROPIC_API_KEY == ''

@@ -7,9 +7,9 @@ An R support bot whose AI call is tested on every pull request with [tinyeval](h
 Clone the repo, or use it as a template. With R 4.4 or later:
 
 ```sh
-Rscript -e 'renv::restore()'   # installs the packages in renv.lock
+Rscript -e 'renv::restore()'   # installs the packages in renv.lock, tinyeval included
 export ANTHROPIC_API_KEY=sk-ant-...
-./tinyeval
+Rscript -e 'quit(status = tinyeval::run())'
 ```
 
 ```
@@ -27,8 +27,7 @@ All 3 evals passed (eval-results.json)
 - `prompts/support.md`: the bot's system prompt.
 - `evals/worker.R`: the tinyeval worker. It sources the bot once, then answers each test case.
 - `evals/support.sh`: three test cases and the checks on their replies.
-- `renv.lock`: the R version and package versions, so every clone installs the same ones.
-- `tinyeval`: the eval runner, one bash file.
+- `renv.lock`: the R version and package versions, so every clone installs the same ones. tinyeval comes from [R-universe](https://evalship-hq.r-universe.dev), the rest from CRAN.
 - `.github/workflows/evals.yml`: runs the evals on pull requests and on pushes to main.
 
 ## Use it for your app
@@ -48,6 +47,8 @@ Add `ANTHROPIC_API_KEY` under **Settings** > **Secrets and variables** > **Actio
 The workflow installs the R version and packages in `renv.lock`, caches the packages and loads the bot. Then it runs each test case 3 times. A test case passes when at least 2 of the 3 runs pass. A failing eval fails the job, so you can require it before merging. The results go up as the `eval-results` artifact, also when evals fail.
 
 Without the secret, the workflow skips the evals and stays green. Pull requests from forks get no secrets, so their evals skip too.
+
+Dependabot updates the workflow's actions weekly. Its pull requests get no secrets either, so their evals skip with the same notice. Neither Dependabot nor Renovate reads renv.lock, so update tinyeval with `Rscript -e 'renv::update("tinyeval"); renv::snapshot()'` and commit renv.lock.
 
 ## Compare pull requests with main
 
